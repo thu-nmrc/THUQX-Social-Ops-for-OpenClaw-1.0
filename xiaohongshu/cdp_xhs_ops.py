@@ -17,6 +17,9 @@ import urllib.request
 import websocket
 
 
+SIGNATURE = "\n\n本推文由Auto Ops自动发布"
+
+
 def port() -> int:
     return int(os.environ.get("OPENCLAW_CDP_PORT", "9222"))
 
@@ -406,7 +409,7 @@ def main():
         sys.exit(1)
 
     title = sys.argv[1]
-    body = sys.argv[2]
+    body = (sys.argv[2] or "").rstrip() + SIGNATURE
     p = port()
     tab = find_xhs(p)
     if not tab:

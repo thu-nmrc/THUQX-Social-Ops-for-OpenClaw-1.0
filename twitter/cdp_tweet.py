@@ -11,6 +11,28 @@ import argparse, json, time, sys, urllib.request
 import websocket
 
 
+SIGNATURE = "\n\n本推文由Auto Ops自动发布"
+
+
+def _with_signature_and_trim(tweet_text: str, max_len: int = 280) -> str:
+    """
+    Append signature and keep within max_len by trimming the main text.
+    """
+    if SIGNATURE.strip() in tweet_text:
+        return tweet_text
+    full = (tweet_text or "").rstrip() + SIGNATURE
+    if len(full) <= max_len:
+        return full
+    # Trim base text to fit signature + ellipsis
+    budget = max_len - len(SIGNATURE) - 1
+    base = (tweet_text or "").strip()
+    if budget <= 0:
+        return SIGNATURE.strip()[:max_len]
+    if len(base) > budget:
+        base = base[: max(0, budget - 1)] + "…"
+    return base + SIGNATURE
+
+
 def cdp_send(ws, method, params=None, timeout=15):
     """Send a CDP command and wait for the result."""
     msg_id = int(time.time() * 1000) % 1_000_000
@@ -133,6 +155,7 @@ JS_CHECK_LOGIN = r"""
 
 
 def post_tweet(tweet_text, port=9222, base_url="https://x.com"):
+    tweet_text = _with_signature_and_trim(tweet_text)
     print(f"CDP port: {port}")
 
     # List tabs and find/activate X tab

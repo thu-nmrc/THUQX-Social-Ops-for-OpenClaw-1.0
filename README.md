@@ -35,6 +35,7 @@ bash scripts/run_social_ops_v5.sh "AI认知债务"
 
 - **可选**：`THUQX_PLATFORM_PAUSE=3`（平台间间隔秒数，默认 2；网络慢/SPA 重时更稳）
 - **兼容**：`scripts/run_social_publish_v5.sh` 会自动转调到 `run_social_ops_v5.sh`
+- **可持续运营**：`bash scripts/run_continuous_ops.sh "主题"`（每轮随机等待 4-12 小时 + 分钟抖动）
 
 顺序（为了稳定，**必须顺序**）：
 

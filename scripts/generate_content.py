@@ -4,9 +4,51 @@ THUQX AutoOps for OpenClaw 0.5 — 根据主题生成四平台文案，输出 JS
 与 OpenClaw skill zeelin-social-autopublisher 内脚本保持一致。
 """
 import json
+import re
 import sys
+import urllib.parse
+import urllib.request
 
 topic = sys.argv[1] if len(sys.argv) > 1 else "AI认知债务"
+
+
+def web_search_materials(q: str, max_items: int = 5) -> list[dict]:
+    """
+    Basic web search step for reference materials (no key required).
+    Tries DuckDuckGo HTML endpoint and extracts top result titles/urls.
+    Returns [] on failure.
+    """
+    try:
+        url = "https://duckduckgo.com/html/?" + urllib.parse.urlencode({"q": q})
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/122.0 Safari/537.36"
+            },
+        )
+        with urllib.request.urlopen(req, timeout=8) as r:
+            html = r.read().decode("utf-8", errors="ignore")
+
+        items: list[dict] = []
+        for m in re.finditer(r'class="result__a"[^>]*href="([^"]+)"[^>]*>(.*?)</a>', html):
+            href = m.group(1)
+            title = re.sub(r"<.*?>", "", m.group(2)).strip()
+            if not title:
+                continue
+            items.append({"title": title[:140], "url": href[:300]})
+            if len(items) >= max_items:
+                break
+        return items
+    except Exception:
+        return []
+
+
+materials = web_search_materials(topic)
+materials_text = ""
+if materials:
+    bullets = [f"- {it['title']} ({it['url']})" for it in materials]
+    materials_text = "参考素材（来自公开网页搜索，供写作参考）：\n" + "\n".join(bullets)
 
 content = {}
 
@@ -33,6 +75,7 @@ content["weibo"] = f"""很多人觉得AI让人更聪明。
 你怎么看？
 
 主题：{topic}
+{materials_text}
 #人工智能 #AI"""
 
 content["xhs_title"] = f"关于「{topic}」，一个被忽视的真相"
@@ -54,6 +97,7 @@ AI其实像一条龙。
 真正的差距不是AI能力，而是人的思考能力。
 
 主题：{topic}
+{materials_text}
 #深度思考 #AI"""
 
 content["wechat_title"] = f"{topic}：当工具越强，人该怎么用"
@@ -81,6 +125,8 @@ AI像一条龙。
 另一类人，被AI逐渐替代。
 
 本文围绕主题：{topic}。
+
+{materials_text}
 """
 
 print(json.dumps(content, ensure_ascii=False))

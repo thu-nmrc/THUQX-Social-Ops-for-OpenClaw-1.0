@@ -1,7 +1,8 @@
 #!/bin/bash
 # THUQX AutoOps for OpenClaw 0.5 — 四平台一键运营
 # 用法: bash scripts/run_social_ops_v5.sh "主题"
-# 环境变量: OPENCLAW_CDP_PORT, THUQX_PLATFORM_PAUSE（默认 2）, SKIP_CONTENT_GEN + THUQX_CONTENT_JSON
+# 环境变量: OPENCLAW_CDP_PORT, THUQX_PLATFORM_PAUSE（基础秒数，默认 2）, SKIP_CONTENT_GEN + THUQX_CONTENT_JSON
+# 平台间隔: sleep = BASE + rand(0..6)，即默认 2-8 秒随机抖动
 set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -9,7 +10,7 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}/_thuqx_cdp_common.sh"
 
-PAUSE="${THUQX_PLATFORM_PAUSE:-2}"
+BASE_PAUSE="${THUQX_PLATFORM_PAUSE:-2}"
 TOPIC="${1:-AI认知债务}"
 
 thuqx_ensure_cdp || exit 1
@@ -55,20 +56,26 @@ echo ""
 
 FAIL=0
 
+sleep_jitter() {
+  # BASE + rand(0..6) seconds
+  local extra=$((RANDOM % 7))
+  sleep $((BASE_PAUSE + extra))
+}
+
 echo "[1/4] Twitter Ops..."
 bash "$ROOT_DIR/twitter/tweet.sh" "$TW" 2>&1 | sed 's/^/  [Twitter] /'
 [ "${PIPESTATUS[0]}" -ne 0 ] && FAIL=$((FAIL + 1))
-sleep "$PAUSE"
+sleep_jitter
 
 echo "[2/4] Weibo Ops..."
 bash "$ROOT_DIR/weibo/run_weibo_ops.sh" "$WB" 2>&1 | sed 's/^/  [Weibo] /'
 [ "${PIPESTATUS[0]}" -ne 0 ] && FAIL=$((FAIL + 1))
-sleep "$PAUSE"
+sleep_jitter
 
 echo "[3/4] Xiaohongshu Ops..."
 python3 "$ROOT_DIR/xiaohongshu/cdp_xhs_ops.py" "$XT" "$XB" 2>&1 | sed 's/^/  [XHS] /'
 [ "${PIPESTATUS[0]}" -ne 0 ] && FAIL=$((FAIL + 1))
-sleep "$PAUSE"
+sleep_jitter
 
 echo "[4/4] WeChat Ops (draft)..."
 python3 "$ROOT_DIR/wechat/cdp_wechat_ops.py" "$WT" "$WBODY" 2>&1 | sed 's/^/  [WeChat] /'
