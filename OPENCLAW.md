@@ -1,5 +1,7 @@
 # OpenClaw 集成说明
 
+**上游仓库：** [thu-nmrc/THUQX-AutoOps-for-OpenClaw-0.5](https://github.com/thu-nmrc/THUQX-AutoOps-for-OpenClaw-0.5)（THUQX AutoOps for OpenClaw **0.5**）
+
 本仓库脚本与本地 **OpenClaw skills** 目录保持同一逻辑，便于双向同步。
 
 ## 推荐映射（复制到 `~/.openclaw/workspace/skills/`）

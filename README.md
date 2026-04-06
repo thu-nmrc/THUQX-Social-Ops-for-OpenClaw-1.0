@@ -1,6 +1,6 @@
-# THUQX Social Ops for OpenClaw 1.0
+# THUQX AutoOps for OpenClaw 0.5
 
-**AI 多平台文案生成 + 四平台顺序自动运营（CDP）**
+**AI 多平台文案生成 + 四平台顺序自动运营（CDP）** · *version 0.5*
 
 清华大学新媒体研究中心 · 智能传播工具链
 
@@ -109,4 +109,4 @@ MIT
 
 ---
 
-*THUQX · 清华大学新媒体研究中心*
+*THUQX AutoOps 0.5 · 清华大学新媒体研究中心*

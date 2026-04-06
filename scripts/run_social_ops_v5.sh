@@ -1,5 +1,5 @@
 #!/bin/bash
-# THUQX Social Ops for OpenClaw 1.0 — 四平台一键运营
+# THUQX AutoOps for OpenClaw 0.5 — 四平台一键运营
 # 用法: bash scripts/run_social_ops_v5.sh "主题"
 # 环境变量: OPENCLAW_CDP_PORT, THUQX_PLATFORM_PAUSE（默认 2）, SKIP_CONTENT_GEN + THUQX_CONTENT_JSON
 set -o pipefail

@@ -1,6 +1,6 @@
 ---
 name: zeelin-social-autopublisher
-description: THUQX 四平台一键运营 Ops（Twitter、微博、小红书、微信公众号草稿）。主题生成 JSON + CDP 顺序执行。
+description: THUQX AutoOps for OpenClaw 0.5 — 四平台一键运营（Twitter、微博、小红书、微信公众号草稿）。主题生成 JSON + CDP 顺序执行。
 ---
 
 本文件为仓库内备份；使用 OpenClaw 时请复制到  
